@@ -30,6 +30,7 @@ namespace Nyelvizsga
 
             foreach (var nyelv in Vizsgak)
             {
+
                 sw.WriteLine($"{nyelv.Nyelv};{nyelv.SikeresekSzama.Values.Sum() + nyelv.SikertelenekSzama.Values.Sum()};{((double)nyelv.SikeresekSzama.Values.Sum() / (nyelv.SikeresekSzama.Values.Sum() + nyelv.SikertelenekSzama.Values.Sum())) * 100:0.00}%");
 
             }
@@ -40,17 +41,17 @@ namespace Nyelvizsga
         private static void vizsgazoNelkuliNyelv()
         {
             Console.WriteLine("5. feladat:");
-            int vizsgazok = 0;
+            bool voltUresVizsga = false;
             foreach (var nyelv in Vizsgak)
             {
                 if (nyelv.SikeresekSzama[bekertEv] == 0 && nyelv.SikertelenekSzama[bekertEv] == 0)
                 {
                     Console.WriteLine("\t"+nyelv.Nyelv);
-                    vizsgazok++;
+                    voltUresVizsga = true;
                 }
             }
 
-            if (vizsgazok == 0)
+            if (!voltUresVizsga)
             {
                 Console.WriteLine("Minden nyelvbol volt vizsgazo");
             }
@@ -94,57 +95,59 @@ namespace Nyelvizsga
         {
 
             Console.WriteLine("2. feladat: A legnepszerubb nyelvek: ");
-            var nepszeruNyelvek =  Vizsgak.OrderByDescending(x => x.SikeresekSzama.Values.Sum() + x.SikertelenekSzama.Values.Sum()).Select(x => new { nev = x.Nyelv, vizsgakSzama = x.SikeresekSzama.Values.Sum() + x.SikertelenekSzama.Values.Sum() }).Take(3).ToList();
-            foreach (var nyelv in nepszeruNyelvek)
-            {
-                Console.WriteLine($"\t{nyelv.nev}\t{nyelv.vizsgakSzama}");
-            }
+            //var nepszeruNyelvek = Vizsgak.OrderByDescending(x => x.SikeresekSzama.Values.Sum() + x.SikertelenekSzama.Values.Sum()).Select(x => new { nev = x.Nyelv, vizsgakSzama = x.SikeresekSzama.Values.Sum() + x.SikertelenekSzama.Values.Sum() }).Take(3).ToList();
+            //foreach (var nyelv in nepszeruNyelvek)
+            //{
+            //    Console.WriteLine($"\t{nyelv.nev}\t{nyelv.vizsgakSzama}");
+            //}
+
 
 
             //Nem LINQ
 
-            //var vizsgakSzama = new Dictionary<string, int>();
-            //int tempOsszeg = 0;
-            //string tempNev;
-            //foreach (var vizsga in Vizsgak)
-            //{
-            //    tempNev = vizsga.Nyelv;
-            //    foreach (var evszam in vizsga.SikeresekSzama)
-            //    {
-            //        tempOsszeg += evszam.Value;
-            //    }
-            //    foreach (var evszam in vizsga.SikertelenekSzama)
-            //    {
-            //        tempOsszeg += evszam.Value;
-            //    }
-            //    vizsgakSzama.Add(tempNev, tempOsszeg);
-            //    tempOsszeg = 0;
+            var vizsgakSzama = new Dictionary<string, int>();
+            int tempOsszeg = 0;
+            string tempNev;
+            foreach (var vizsga in Vizsgak)
+            {
+                tempNev = vizsga.Nyelv;
+                foreach (var evszam in vizsga.SikeresekSzama)
+                {
+                    tempOsszeg += evszam.Value; // sikeresek
+                }
+                foreach (var evszam in vizsga.SikertelenekSzama)
+                {
+                    tempOsszeg += evszam.Value; //sikeresek+sikertelenek
+                }
+                vizsgakSzama.Add(tempNev, tempOsszeg);
+                tempOsszeg = 0; // le kell nullázni, mert jön az új nyelv
 
-            //}
+            }
 
-            //List<string> legnepszerubb = new List<string>();
-            //string nyelvTemp = "";
-            //for (int i = 0; i < 3; i++)
-            //{
+            List<string> legnepszerubb = new List<string>();
+            string nyelvTemp = "";
+            for (int i = 0; i < 3; i++) //3-szor választom ki a maxit, miután kiveszem a maxit remove-val
+            {
 
-            //    foreach (var v in vizsgakSzama)
-            //    {
-            //        if (tempOsszeg < v.Value)
-            //        {
-            //            nyelvTemp = v.Key;
-            //            tempOsszeg = v.Value;
-            //        }
+                foreach (var v in vizsgakSzama)
+                {
+                    if (tempOsszeg < v.Value)
+                    {
+                        nyelvTemp = v.Key;
+                        tempOsszeg = v.Value;
+                    }
 
-            //    }
-            //    legnepszerubb.Add(nyelvTemp);
-            //    vizsgakSzama.Remove(nyelvTemp);
-            //    tempOsszeg = 0;
-            //}
+                }
+                legnepszerubb.Add(nyelvTemp);
+                vizsgakSzama.Remove(nyelvTemp);//kulcs alapján kivesszük a dic-ből a legnagyobb értéket
+                tempOsszeg = 0;
+            }
 
-            //foreach (var top in legnepszerubb)
-            //{
-            //    Console.WriteLine("\t"+top);
-            //}
+
+            foreach (var top in legnepszerubb)
+            {
+                Console.WriteLine("\t" + top);
+            }
 
 
 

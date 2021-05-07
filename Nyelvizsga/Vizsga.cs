@@ -13,7 +13,7 @@ namespace Nyelvizsga
         public string Nyelv { get; set; }
         public Dictionary<int, int> SikeresekSzama { get; set; }
         public Dictionary<int, int> SikertelenekSzama { get; set; }
-
+        
 
         public static List<Vizsga> beolvasas()
         {
@@ -30,13 +30,17 @@ namespace Nyelvizsga
 
                 temp1 = sr1.ReadLine().Split(';');
                 temp2 = sr2.ReadLine().Split(';');
-                var vizsga = new Vizsga() { Nyelv = temp1[0], SikeresekSzama = new Dictionary<int, int>(), SikertelenekSzama = new Dictionary<int, int>() };
-                for (int i = 2009; i < 2019; i++)
+                Vizsga vizsga = new Vizsga() { Nyelv = temp1[0], SikeresekSzama = new Dictionary<int, int>(), SikertelenekSzama = new Dictionary<int, int>() };
+                for (int i = 2009; i < 2019; i++) //a for ciklus kell, h feltöltsem a dic-t
                 {
-                    vizsga.SikeresekSzama.Add(i, Int32.Parse(temp1[i-2008]));
+                                                                    // i = 2009   [2009-2008] = [1]
+                    vizsga.SikeresekSzama.Add(i, Int32.Parse(temp1[i-2008])); //i lesz a kulcs, Int32.Parse(temp1[i-2008]) az érték, parse-olni kell, mert ez string
                     vizsga.SikertelenekSzama.Add(i, Int32.Parse(temp2[i - 2008]));
                 }
                 output.Add(vizsga);
+
+
+
 
             }
 
